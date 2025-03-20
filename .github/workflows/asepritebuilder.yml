@@ -28,9 +28,17 @@ jobs:
 
       - name: Extract Skia
         shell: pwsh
-        run: Expand-Archive Skia-Windows-Release-x64.zip -DestinationPath skia
+        run: | 
+          Expand-Archive Skia-Windows-Release-x64.zip -DestinationPath skia
+          Remove-Item -Path Skia-Windows-Release-x64.zip
 
-      - name: listdirs
+      - name: List Dirs (debug)
         shell: cmd
         run: |
           dir
+
+  build:
+    runs-on: windows-latest
+    steps:
+        - name: build
+          uses: seanmiddleditch/gha-setup-vsdevenv@v5
