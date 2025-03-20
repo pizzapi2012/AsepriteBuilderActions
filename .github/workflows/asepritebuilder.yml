@@ -18,13 +18,19 @@ jobs:
           fileName: '*.zip'
           tag: v1.3.13
           extract: true
+
       - name: Download Skia
         uses: robinraju/release-downloader@v1.12
         with:
-          repository: 'aseprite/skia'
-          fileName: 'Skia-Windows-Release-x64.zip'
-          tag: m102-861e4743af
-          extract: true
+            repository: 'aseprite/skia'
+            fileName: 'Skia-Windows-Release-x64.zip'
+            tag: m102-861e4743af
+            out-file-path: skia.zip
+
+      - name: Extract Skia
+        shell: pwsh
+        run: Expand-Archive skia.zip -DestinationPath skia
+
       - name: listdirs
         shell: cmd
         run: |
