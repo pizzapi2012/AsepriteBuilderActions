@@ -1,4 +1,4 @@
-name: Aseprite Builder
+name: Aseprite Builder v1.3.13
 
 on:
   push:
@@ -11,13 +11,18 @@ jobs:
   download:
     runs-on: windows-latest
     steps:
-      - name: Download Aseprite
+      - name: Download Aseprite v1.3.13
         uses: robinraju/release-downloader@v1.12
         with:
           repository: 'aseprite/aseprite'
           fileName: '*.zip'
-          latest: true
+          version: v1.3.13
           extract: true
-      - name: List Directory
-        shell: cmd
-        run: dir
+      - name: Download Skia
+        uses: robinraju/release-downloader@v1.12
+        with:
+          repository: 'aseprite/skia'
+          fileName: 'Skia-Windows-Release-x64.zip'
+          version: m102-861e4743af
+          output: skia.zip
+          extract: true
