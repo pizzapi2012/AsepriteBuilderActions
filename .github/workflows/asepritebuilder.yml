@@ -18,8 +18,6 @@ jobs:
           fileName: '*.zip'
           latest: true
           extract: true
-      - uses: actions/checkout@v4
-        with:
-          shell: cmd
-          run: |
-            dir
+      - name: List Directory
+        shell: cmd
+        run: dir
