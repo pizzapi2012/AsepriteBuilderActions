@@ -26,3 +26,7 @@ jobs:
           tag: m102-861e4743af
           out-file-path: skia.zip
           extract: true
+      - name: listdirs
+        shell: cmd
+        run: |
+          dir
