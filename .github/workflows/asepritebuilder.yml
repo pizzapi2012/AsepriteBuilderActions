@@ -24,7 +24,6 @@ jobs:
           repository: 'aseprite/skia'
           fileName: 'Skia-Windows-Release-x64.zip'
           tag: m102-861e4743af
-          out-file-path: skia.zip
           extract: true
       - name: listdirs
         shell: cmd
