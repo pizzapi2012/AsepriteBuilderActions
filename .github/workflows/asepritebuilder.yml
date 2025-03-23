@@ -40,7 +40,20 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
-        - name: build
-          uses: johnnynunez/gha-setup-vsdevenv@v1
+        - name: Setup Perl environment
+          uses: shogo82148/actions-setup-perl@v1.33.0
+        
+        - name: Install LLVM and Clang
+          uses: KyleMayes/install-llvm-action@v2.0.6
           with:
-            components: "Microsoft.VisualStudio.Component.CoreEditor;Microsoft.VisualStudio.Workload.CoreEditor;Microsoft.VisualStudio.Component.Roslyn.Compiler;Microsoft.Component.MSBuild;Microsoft.VisualStudio.Component.TextTemplating;Microsoft.VisualStudio.Component.VC.CoreIde;Microsoft.VisualStudio.Component.VC.Tools.x86.x64;Microsoft.VisualStudio.Component.Graphics.Tools;Microsoft.VisualStudio.Component.VC.DiagnosticTools;Microsoft.VisualStudio.Component.Windows11SDK.22621;Microsoft.VisualStudio.Component.VC.ATL,Microsoft.VisualStudio.Component.VC.Redist.14.Latest,Microsoft.VisualStudio.ComponentGroup.NativeDesktop.Core,Microsoft.VisualStudio.Component.Windows11Sdk.WindowsPerformanceToolkit,Microsoft.VisualStudio.Component.CppBuildInsights,Microsoft.VisualStudio.ComponentGroup.WebToolsExtensions.CMake,Microsoft.VisualStudio.Component.VC.CMake.Project;Microsoft.VisualStudio.Component.Vcpkg,Microsoft.VisualStudio.Workload.NativeDesktop"
+            version: 19.1.7
+        - name: Setup Cmake and Ninja
+          uses: lukka/get-cmake@latest
+          with:
+            cmakeVersion: latest
+            ninjaVersion: latest
+        - name: Install VS2022
+          shell: cmd
+          run: |
+            powershell -c "Invoke-WebRequest -Uri 'https://aka.ms/vs/17/release/vs_community.exe' -OutFile '$pwd/vs2022.exe'"
+            vs2022.exe install --add Microsoft.VisualStudio.Component.CoreEditor;Microsoft.VisualStudio.Workload.CoreEditor;Microsoft.VisualStudio.Component.Roslyn.Compiler;Microsoft.Component.MSBuild;Microsoft.VisualStudio.Component.TextTemplating;Microsoft.VisualStudio.Component.VC.CoreIde;Microsoft.VisualStudio.Component.VC.Tools.x86.x64;Microsoft.VisualStudio.Component.Graphics.Tools;Microsoft.VisualStudio.Component.VC.DiagnosticTools;Microsoft.VisualStudio.Component.Windows11SDK.22621;Microsoft.VisualStudio.Component.VC.ATL;Microsoft.VisualStudio.Component.VC.Redist.14.Latest;Microsoft.VisualStudio.ComponentGroup.NativeDesktop.Core;  Microsoft.VisualStudio.Component.Windows11Sdk.WindowsPerformanceToolkit;Microsoft.VisualStudio.Component.CppBuildInsights;Microsoft.VisualStudio.ComponentGroup.WebToolsExtensions.CMake;Microsoft.VisualStudio.Component.VC.CMake.Project;Microsoft.VisualStudio.Component.Vcpkg;Microsoft.VisualStudio.Workload.NativeDesktop --passive --norestart
