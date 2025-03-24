@@ -57,4 +57,4 @@ jobs:
           run: |
             (New-Object System.Net.WebClient).DownloadFile(https://aka.ms/vs/17/release/vs_community.exe, vs2022.exe)
             (New-Object System.Net.WebClient).DownloadFile(https://raw.githubusercontent.com/pizzapi2012/AsepriteBuilderActions/refs/heads/main/aseprite.vsconfig, aseprite.vsconfig)
-            Start-Process vs2022.exe -Verb runAs -ArgumentList ("--passive","--quiet","--norestart","--config aseprite.vsconfig") -Wait
+            Start-Process vs2022.exe -Verb runAs -ArgumentList "--passive","--quiet","--norestart","--config aseprite.vsconfig" -Wait
