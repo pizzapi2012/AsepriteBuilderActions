@@ -56,6 +56,6 @@ jobs:
           shell: pwsh
           run: |
             $user = New-Object System.Net.WebClient
-            $user.DownloadFile("https://aka.ms/vs/17/release/vs_community.exe", vs2022.exe)
-            $user.DownloadFile("https://raw.githubusercontent.com/pizzapi2012/AsepriteBuilderActions/refs/heads/main/aseprite.vsconfig", aseprite.vsconfig)
+            $user.DownloadFile("https://aka.ms/vs/17/release/vs_community.exe","vs2022.exe")
+            $user.DownloadFile("https://raw.githubusercontent.com/pizzapi2012/AsepriteBuilderActions/refs/heads/main/aseprite.vsconfig", "aseprite.vsconfig")
             Start-Process vs2022.exe -Verb runAs -ArgumentList ("--passive","--quiet","--norestart","--config aseprite.vsconfig") -Wait
