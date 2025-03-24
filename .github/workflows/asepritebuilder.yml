@@ -52,7 +52,7 @@ jobs:
           with:
             cmakeVersion: latest
             ninjaVersion: latest
-        - name: Install VS2022 & OpenSSl
+        - name: Install VS2022 & OpenSSL
           shell: pwsh
           run: |
             powershell -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "[System.Net.ServicePointManager]::SecurityProtocol = 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))" && SET "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"
@@ -65,9 +65,9 @@ jobs:
           shell: cmd
           run: |
             call "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\VsDevCmd.bat" -arch=x64
-            skiapath = "$pwd\skia"
+            cd aseprite
+            set skiapath = "$pwd\skia"
             mkdir build
             cd build
-            call "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\VsDevCmd.bat" -arch=x64
             cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DLAF_BACKEND="%skiapath%" -DSKIA_DIR="%skiapath%" -DSKIA_LIBRARY_DIR="$skiapath\out\Release-x64" -DSKIA_LIBRARY="$skiapath\out\Release-x64\skia.lib" -DENABLE_CCACHE=NO -DCMAKE_USE_OPENSSL=YES -DCMAKE_IGNORE_PATH=C:\Strawberry\c\bin -G Ninja ..
             ninja aseprite
