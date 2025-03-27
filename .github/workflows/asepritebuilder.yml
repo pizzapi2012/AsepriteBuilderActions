@@ -53,7 +53,7 @@ jobs:
         run: |
           powershell -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "[System.Net.ServicePointManager]::SecurityProtocol = 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))" && SET "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"
           choco install openssl -y
-          $user.DownloadFile("https://raw.githubusercontent.com/pizzapi2012/AsepriteBuilderActions/refs/heads/main/aseprite.vsconfig", "aseprite.vsconfig")
+          Invoke-WebRequest https://raw.githubusercontent.com/pizzapi2012/AsepriteBuilderActions/refs/heads/main/aseprite.vsconfig -OutFile aseprite.vsconfig
           choco install visualstudio2022community --package-parameters "--norestart --wait --passive --config aseprite.vsconfig" -y
       - name: Build Aseprite v1.3.13
         shell: cmd
