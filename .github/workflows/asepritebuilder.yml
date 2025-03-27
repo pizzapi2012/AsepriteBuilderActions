@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  download:
+  downloadbuild:
     runs-on: windows-latest
     steps:
       - name: Download Aseprite v1.3.13
@@ -36,38 +36,32 @@ jobs:
         shell: cmd
         run: |
           dir
+      - name: Setup Perl environment
+        uses: shogo82148/actions-setup-perl@v1.33.0
 
-  build:
-    runs-on: windows-latest
-    steps:
-        - name: Setup Perl environment
-          uses: shogo82148/actions-setup-perl@v1.33.0
-        
-        - name: Install LLVM and Clang
-          uses: KyleMayes/install-llvm-action@v2.0.6
-          with:
-            version: 19.1.7
-        - name: Setup Cmake and Ninja
-          uses: lukka/get-cmake@latest
-          with:
-            cmakeVersion: latest
-            ninjaVersion: latest
-        - name: Install VS2022 & OpenSSL
-          shell: pwsh
-          run: |
-            powershell -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "[System.Net.ServicePointManager]::SecurityProtocol = 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))" && SET "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"
-            choco install openssl -y
-            $user = New-Object System.Net.WebClient
-            $user.DownloadFile("https://aka.ms/vs/17/release/vs_community.exe","vs2022.exe")
-            $user.DownloadFile("https://raw.githubusercontent.com/pizzapi2012/AsepriteBuilderActions/refs/heads/main/aseprite.vsconfig", "aseprite.vsconfig")
-            Start-Process vs2022.exe -Verb runAs -ArgumentList ("--passive","--quiet","--norestart","--config aseprite.vsconfig") -Wait
-        - name: Build Aseprite v1.3.13
-          shell: cmd
-          run: |
-            call "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\VsDevCmd.bat" -arch=x64
-            cd aseprite
-            set skiapath = "$pwd\skia"
-            mkdir build
-            cd build
-            cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DLAF_BACKEND="%skiapath%" -DSKIA_DIR="%skiapath%" -DSKIA_LIBRARY_DIR="$skiapath\out\Release-x64" -DSKIA_LIBRARY="$skiapath\out\Release-x64\skia.lib" -DENABLE_CCACHE=NO -DCMAKE_USE_OPENSSL=YES -DCMAKE_IGNORE_PATH=C:\Strawberry\c\bin -G Ninja ..
-            ninja aseprite
+      - name: Install LLVM and Clang
+        uses: KyleMayes/install-llvm-action@v2.0.6
+        with:
+          version: 19.1.7
+      - name: Setup Cmake and Ninja
+        uses: lukka/get-cmake@latest
+        with:
+          cmakeVersion: latest
+          ninjaVersion: latest
+      - name: Install VS2022 & OpenSSL
+        shell: pwsh
+        run: |
+          powershell -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "[System.Net.ServicePointManager]::SecurityProtocol = 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))" && SET "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"
+          choco install openssl -y
+          $user.DownloadFile("https://raw.githubusercontent.com/pizzapi2012/AsepriteBuilderActions/refs/heads/main/aseprite.vsconfig", "aseprite.vsconfig")
+          choco install visualstudio2022community --package-parameters "--norestart --wait --passive --config aseprite.vsconfig" -y
+      - name: Build Aseprite v1.3.13
+        shell: cmd
+        run: |
+          call "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\VsDevCmd.bat" -arch=x64
+          cd aseprite
+          set skiapath = "$pwd\skia"
+          mkdir build
+          cd build
+          cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DLAF_BACKEND="%skiapath%" -DSKIA_DIR="%skiapath%" -DSKIA_LIBRARY_DIR="$skiapath\out\Release-x64" -DSKIA_LIBRARY="$skiapath\out\Release-x64\skia.lib" -DENABLE_CCACHE=NO -DCMAKE_USE_OPENSSL=YES -DCMAKE_IGNORE_PATH=C:\Strawberry\c\bin -G Ninja ..
+          ninja aseprite
