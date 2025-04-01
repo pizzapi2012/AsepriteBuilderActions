@@ -38,30 +38,24 @@ jobs:
           dir
       - name: Setup Perl environment
         uses: shogo82148/actions-setup-perl@v1.33.0
-
-      - name: Install LLVM and Clang
-        uses: KyleMayes/install-llvm-action@v2.0.6
-        with:
-          version: 19.1.7
+        
       - name: Setup Cmake and Ninja
         uses: lukka/get-cmake@latest
         with:
-          cmakeVersion: latest
+          cmakeVersion: 3.31.6
           ninjaVersion: latest
-      - name: Install VS2022 & OpenSSL
+      - name: Install VS2022 & OpenSSL & LLVM
         shell: pwsh
         run: |
           powershell -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "[System.Net.ServicePointManager]::SecurityProtocol = 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))" && SET "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"
-          choco install openssl -y
-          Invoke-WebRequest https://raw.githubusercontent.com/pizzapi2012/AsepriteBuilderActions/refs/heads/main/aseprite.vsconfig -OutFile aseprite.vsconfig
-          choco install visualstudio2022community --package-parameters "--norestart --wait --passive --config aseprite.vsconfig" -y
-      - name: Build Aseprite v1.3.13
+          choco install openssl
+          choco install visualstudio2022community --package-parameters "--norestart --wait --passive --add Microsoft.VisualStudio.Component.CoreEditor;Microsoft.VisualStudio.Workload.CoreEditor;Microsoft.VisualStudio.Workload.VCTools;includeRecommended;includeOptional"
+          choco install llvm
+      - name: Build Aseprite
         shell: cmd
         run: |
+          dir
           call "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\VsDevCmd.bat" -arch=x64
-          cd aseprite
           set skiapath = "$pwd\skia"
-          mkdir build
-          cd build
-          cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DLAF_BACKEND="%skiapath%" -DSKIA_DIR="%skiapath%" -DSKIA_LIBRARY_DIR="$skiapath\out\Release-x64" -DSKIA_LIBRARY="$skiapath\out\Release-x64\skia.lib" -DENABLE_CCACHE=NO -DCMAKE_USE_OPENSSL=YES -DCMAKE_IGNORE_PATH=C:\Strawberry\c\bin -G Ninja ..
+          cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DLAF_BACKEND="%skiapath%" -DSKIA_DIR="%skiapath%" -DSKIA_LIBRARY_DIR="$skiapath\out\Release-x64" -DSKIA_LIBRARY="$skiapath\out\Release-x64\skia.lib" -DENABLE_CCACHE=NO -DCMAKE_USE_OPENSSL=YES -DOPENSSL_ROOT_DIR="C:\Program Files\OpenSSL\" -DCMAKE_IGNORE_PATH=C:\Strawberry\c\bin -G Ninja .
           ninja aseprite
